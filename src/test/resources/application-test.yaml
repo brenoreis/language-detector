@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    name: testdb
+  jmx:
+    default-domain: jpa.sample

@@ -1,0 +1,17 @@
+spring:
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  mvc:
+    view:
+      prefix: /WEB-INF/jsp/
+      suffix: .jsp
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
