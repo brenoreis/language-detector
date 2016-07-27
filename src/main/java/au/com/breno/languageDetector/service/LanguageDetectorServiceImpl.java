@@ -129,38 +129,42 @@ public class LanguageDetectorServiceImpl implements LanguageDetectorService {
 
         List<Language> languages = languageRepository.findAll();
 
-        Map<String, Integer> scores = new HashMap<String, Integer>();
+        if (languages.size() == 0) {
+            return "No language profile has been loaded into the DB.";
+        } else {
+            Map<String, Integer> scores = new HashMap<String, Integer>();
 
-        for (Language language : languages) {
+            for (Language language : languages) {
 
-            for (Map.Entry<String, Integer> entry : inputMap.entrySet()) {
+                for (Map.Entry<String, Integer> entry : inputMap.entrySet()) {
 
-                LanguageProfile languageProfile = languageProfileRepository.findByLanguageAndNgram(language, entry.getKey());
+                    LanguageProfile languageProfile = languageProfileRepository.findByLanguageAndNgram(language, entry.getKey());
 
-                Integer newValue;
-                //compute
-                if (languageProfile == null) {
-                    //not found, penalise
-                    newValue = NOT_FOUND;
-                } else {
-                    //found, compute frequency
-                    newValue = Math.abs(languageProfile.getRank() - entry.getValue());
-                }
+                    Integer newValue;
+                    //compute
+                    if (languageProfile == null) {
+                        //not found, penalise
+                        newValue = NOT_FOUND;
+                    } else {
+                        //found, compute frequency
+                        newValue = Math.abs(languageProfile.getRank() - entry.getValue());
+                    }
 
-                //add to map
-                Integer value = scores.get(language.getName());
-                if (value == null) {
-                    scores.put(language.getName(), newValue);
-                } else {
-                    scores.put(language.getName(), value + newValue);
+                    //add to map
+                    Integer value = scores.get(language.getName());
+                    if (value == null) {
+                        scores.put(language.getName(), newValue);
+                    } else {
+                        scores.put(language.getName(), value + newValue);
+                    }
                 }
             }
+
+            Map<String, Integer> sortedScores = LanguageDetectorUtils.sortAsc(scores);
+
+            //return top language
+            return sortedScores.entrySet().iterator().next().getKey();
         }
-
-        Map<String, Integer> sortedScores = LanguageDetectorUtils.sortAsc(scores);
-
-        //return top language
-        return sortedScores.entrySet().iterator().next().getKey();
 
     }
 

@@ -2,8 +2,10 @@ package au.com.breno.languageDetector.service;
 
 import au.com.breno.languageDetector.utils.LanguageDetectorUtils;
 import org.junit.Assert;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -19,6 +21,7 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class LanguageDetectorServiceIntegrationTest {
 
@@ -27,7 +30,16 @@ public class LanguageDetectorServiceIntegrationTest {
 
 
     @Test
-    public void shouldDetect() throws Exception {
+    public void should1DetectNoProfile() throws Exception {
+
+        String detectResult = languageDetectorService.detect("Can't judge a book by its cover");
+
+        Assert.assertEquals("No language profile has been loaded into the DB.", detectResult);
+
+    }
+
+    @Test
+    public void should2Detect() throws Exception {
 
         Map<String, String> map = LanguageDetectorUtils.readFiles(getClass().getClassLoader().getResource("files").getPath());
 
